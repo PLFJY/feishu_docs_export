@@ -123,6 +123,7 @@ const ExportFormatConfigModal: React.FC<ExportFormatConfigModalProps> = ({ visib
           <Select>
             <Select.Option value="docx">Word格式 (.docx)</Select.Option>
             <Select.Option value="pdf">PDF格式 (.pdf)</Select.Option>
+            <Select.Option value="md">Markdown格式 (.md)</Select.Option>
           </Select>
         </Form.Item>
 
@@ -135,6 +136,7 @@ const ExportFormatConfigModal: React.FC<ExportFormatConfigModalProps> = ({ visib
           <Select>
             <Select.Option value="docx">Word格式 (.docx)</Select.Option>
             <Select.Option value="pdf">PDF格式 (.pdf)</Select.Option>
+            <Select.Option value="md">Markdown格式 (.md)</Select.Option>
           </Select>
         </Form.Item>
 

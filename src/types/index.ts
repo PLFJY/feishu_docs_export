@@ -219,8 +219,8 @@ export interface DownloadErrorEvent {
  * 导出格式配置接口
  */
 export interface ExportFormatConfig {
-  doc: 'docx' | 'pdf';
-  docx: 'docx' | 'pdf';
+  doc: 'docx' | 'pdf' | 'md';
+  docx: 'docx' | 'pdf' | 'md';
   sheet: 'xlsx' | 'csv';
   bitable: 'xlsx' | 'csv';
   slides: 'pptx' | 'pdf';
