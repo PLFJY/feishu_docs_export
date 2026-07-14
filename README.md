@@ -144,7 +144,42 @@ npm run tauri build
 - `bitable:app` - 查看、评论、编辑和管理多维表格
 - `wiki:wiki` - 查看、编辑和管理知识库
 - `sheets:spreadsheet` - 查看、评论、编辑和管理电子表格
-- 
+- `contact:user.employee_id:readonly` 获取员工 ID
+
+```json
+{
+  "scopes": {
+    "tenant": [
+      "bitable:app",
+      "contact:user.employee_id:readonly",
+      "docs:doc",
+      "docs:document.media:download",
+      "docs:document:export",
+      "docx:document",
+      "drive:drive",
+      "drive:file",
+      "drive:file:download",
+      "sheets:spreadsheet",
+      "wiki:wiki"
+    ],
+    "user": [
+      "bitable:app",
+      "contact:user.employee_id:readonly",
+      "docs:doc",
+      "docs:document.media:download",
+      "docs:document:export",
+      "docx:document",
+      "docx:document:readonly",
+      "drive:drive",
+      "drive:file",
+      "drive:file:download",
+      "offline_access",
+      "sheets:spreadsheet",
+      "wiki:wiki"
+    ]
+  }
+}
+```
 
 #### 设置重定向 URL
 在应用的「安全设置」中添加重定向 URL：

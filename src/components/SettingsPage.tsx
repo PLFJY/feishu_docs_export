@@ -13,6 +13,22 @@ const inputStyle = {
   transition: 'border-color 0.3s ease'
 };
 
+const requiredScopes = [
+  'bitable:app',
+  'contact:user.employee_id:readonly',
+  'docs:doc',
+  'docs:document.media:download',
+  'docs:document:export',
+  'docx:document',
+  'docx:document:readonly',
+  'drive:drive',
+  'drive:file',
+  'drive:file:download',
+  'offline_access',
+  'sheets:spreadsheet',
+  'wiki:wiki'
+];
+
 /**
  * 设置页面组件属性
  */
@@ -124,11 +140,13 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onBack, onConfigSaved }) =>
 
   return (
     <div style={{ 
-      minHeight: '100vh', 
+      height: '100vh',
+      overflowY: 'auto',
       padding: '40px 20px',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'flex-start',
+      boxSizing: 'border-box'
     }}>
       <Card style={{ width: 500, maxWidth: '100%' }}>
         <div style={{ textAlign: 'center', marginBottom: '24px' }}>
@@ -180,26 +198,29 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ onBack, onConfigSaved }) =>
                        borderRadius: '6px', 
                        padding: '12px'
                      }}>
-                       <Paragraph style={{ margin: 0, fontSize: '13px', color: '#d48806' }}>
+                      <Paragraph style={{ margin: 0, fontSize: '13px', color: '#d48806' }}>
                         <strong>权限配置（必须配置）：</strong>请确保为应用开通以下权限范围（Scope）：
                       </Paragraph>
                       <div style={{ margin: '8px 0', padding: '8px', background: '#fef9e7', borderRadius: '4px', fontSize: '10px', fontFamily: 'monospace', color: '#8b5a00', wordBreak: 'break-all' }}>
-                        contact:user.employee_id:readonly docs:doc docs:document.media:download docs:document:export docx:document drive:drive drive:file drive:file:download wiki:wiki offline_access
+                        {requiredScopes.join(' ')}
                       </div>
                       <Paragraph style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#d46b08' }}>
                         <strong>具体权限说明：</strong>
                       </Paragraph>
                       <ul style={{ margin: '4px 0 0 0', paddingLeft: '20px', fontSize: '11px', color: '#d46b08' }}>
-                        <li><code>contact:user.employee_id:readonly</code> - <strong>【必需】</strong>查看云盘文件列表</li>
-                        <li><code>wiki:wiki</code> - <strong>【必需】</strong>访问知识库空间</li>
+                        <li><code>bitable:app</code> - 查看、评论、编辑和管理多维表格</li>
+                        <li><code>contact:user.employee_id:readonly</code> - 获取员工 ID</li>
                         <li><code>docs:doc</code> - 查看、评论、编辑和管理云文档</li>
                         <li><code>docs:document.media:download</code> - 下载云文档中的媒体文件</li>
                         <li><code>docs:document:export</code> - 导出云文档为指定格式</li>
                         <li><code>docx:document</code> - 访问新版文档</li>
+                        <li><code>docx:document:readonly</code> - 只读访问新版文档</li>
                         <li><code>drive:drive</code> - 获取云空间信息</li>
                         <li><code>drive:file</code> - 访问云空间文件</li>
                         <li><code>drive:file:download</code> - 下载云空间文件</li>
                         <li><code>offline_access</code> - 离线访问授权数据</li>
+                        <li><code>sheets:spreadsheet</code> - 查看、评论、编辑和管理电子表格</li>
+                        <li><code>wiki:wiki</code> - 查看、编辑和管理知识库</li>
                       </ul>
                        <Paragraph style={{ margin: '8px 0 0 0', fontSize: '12px', color: '#d46b08' }}>
                          路径：飞书开放平台 → 应用管理 → 您的应用 → 权限管理 → 权限配置

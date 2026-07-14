@@ -218,9 +218,11 @@ export interface DownloadErrorEvent {
 /**
  * 导出格式配置接口
  */
+export type DocumentExportFormat = 'docx' | 'pdf';
+
 export interface ExportFormatConfig {
-  doc: 'docx' | 'pdf' | 'md';
-  docx: 'docx' | 'pdf' | 'md';
+  doc: DocumentExportFormat;
+  docx: DocumentExportFormat;
   sheet: 'xlsx' | 'csv';
   bitable: 'xlsx' | 'csv';
   slides: 'pptx' | 'pdf';
@@ -238,6 +240,20 @@ export const DEFAULT_EXPORT_FORMAT_CONFIG: ExportFormatConfig = {
   slides: 'pptx',
   mindnote: 'pdf'
 };
+
+/**
+ * 兼容旧配置。此前文档允许选择 md，但飞书导出接口不可用。
+ */
+export function normalizeExportFormatConfig(config: Partial<ExportFormatConfig> = {}): ExportFormatConfig {
+  return {
+    doc: config.doc === 'pdf' ? 'pdf' : 'docx',
+    docx: config.docx === 'pdf' ? 'pdf' : 'docx',
+    sheet: config.sheet === 'csv' ? 'csv' : 'xlsx',
+    bitable: config.bitable === 'csv' ? 'csv' : 'xlsx',
+    slides: config.slides === 'pdf' ? 'pdf' : 'pptx',
+    mindnote: 'pdf'
+  };
+}
 
 /**
  * 全局窗口接口扩展

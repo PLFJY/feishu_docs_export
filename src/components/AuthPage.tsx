@@ -9,7 +9,7 @@ import { emit, listen } from '@tauri-apps/api/event';
 
 const { Title, Paragraph } = Typography;
 
-const FEISHU_SCOPE = 'contact:user.employee_id:readonly docs:doc docs:document.media:download docs:document:export docx:document drive:drive drive:file drive:file:download wiki:wiki offline_access';
+const FEISHU_SCOPE = 'bitable:app contact:user.employee_id:readonly docs:doc docs:document.media:download docs:document:export docx:document docx:document:readonly drive:drive drive:file drive:file:download offline_access sheets:spreadsheet wiki:wiki';
 // const FEISHU_REDIRECT_URI = 'http://localhost:{}/callback';
 
 // 全局标记，防止多个组件实例同时初始化QR码

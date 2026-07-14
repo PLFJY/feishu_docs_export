@@ -29,7 +29,7 @@ const iconStyle = {
 function createWikiRootTreeNode(fileItem: FeishuWikiRoot, parentPath: string[]): FeishuWikiRootTreeNode {
   return {
     title: "知识库",
-    key: "wiki_root",
+    key: "wiki:root",
     type: 'FeishuWikiRoot',
     icon: <HomeOutlined style={{ ...iconStyle, color: '#722ed1' }} />,
     fileItem,
@@ -44,7 +44,7 @@ function createWikiRootTreeNode(fileItem: FeishuWikiRoot, parentPath: string[]):
 function createWikiSpaceTreeNode(fileItem: FeishuWikiSpace, parentPath: string[]): FeishuWikiSpaceTreeNode {
   return {
     title: fileItem.name,
-    key: fileItem.space_id,
+    key: `wiki:space:${fileItem.space_id}`,
     type: 'FeishuWikiSpace',
     icon: <BookOutlined style={{ ...iconStyle, color: '#52c41a' }} />,
     fileItem,
@@ -59,7 +59,7 @@ function createWikiSpaceTreeNode(fileItem: FeishuWikiSpace, parentPath: string[]
 function createWikiNodeTreeNode(fileItem: FeishuWikiNode, parentPath: string[]): FeishuWikiTreeNode {
   return {
     title: fileItem.title,
-    key: fileItem.node_token,
+    key: `wiki:node:${fileItem.space_id}:${fileItem.node_token}`,
     type: 'FeishuWikiNode',
     icon: fileItem.has_child ?  <FolderOpenOutlined style={{ ...iconStyle, color: '#fa8c16' }} /> : <FileTextOutlined style = {{ ...iconStyle, color: '#13c2c2'}} />,
     fileItem,
@@ -90,7 +90,7 @@ function createFileTreeNode(fileItem: FeishuFile, parentPath: string[]): FeishuF
   }
   return {
     title: fileItem.name === '' ? "未命名文件" : fileItem.name,
-    key: fileItem.token,
+    key: `drive:file:${fileItem.token}`,
     type: 'FeishuFile',
     icon,
     fileItem,
@@ -102,7 +102,7 @@ function createFileTreeNode(fileItem: FeishuFile, parentPath: string[]): FeishuF
 function createFolderTreeNode(fileItem: FeishuFolder, parentPath: string[]): FeishuFolderTreeNode {
   return {
     title: fileItem.name,
-    key: fileItem.token,
+    key: `drive:folder:${fileItem.token}`,
     type: 'FeishuFolder',
     icon: <FolderOutlined style={{ ...iconStyle, color: '#1890ff' }} />,
     fileItem,
@@ -122,7 +122,7 @@ function createFolderTreeNode(fileItem: FeishuFolder, parentPath: string[]): Fei
 function createRootMetaTreeNode(fileItem: FeishuRootMeta, parentPath: string[]): FeishuRootMetaTreeNode {
   return {
     title: fileItem.name ?? "云盘",
-    key: fileItem.token,
+    key: `drive:root:${fileItem.token}`,
     type: 'FeishuRootMeta',
     icon: <CloudOutlined style={{ ...iconStyle, color: '#fa541c' }} />,
     fileItem,
@@ -183,7 +183,8 @@ const HomePage: React.FC<HomePageProps> = ({ onViewTasks }) => {
       });
     } catch (error) {
       console.error('加载子节点失败:', error);
-      message.error('加载子节点失败');
+      const errorMessage = error instanceof Error && error.message ? error.message : '加载子节点失败';
+      message.error(errorMessage);
     }
   };
 
@@ -204,7 +205,7 @@ const HomePage: React.FC<HomePageProps> = ({ onViewTasks }) => {
       const wikiRoot = createWikiRootTreeNode({ name: "知识库" }, []);
 
       setTreeData([driveRoot, wikiRoot]);
-      setExpandedKeys([rootMeta.token, 'wiki_root']);
+      setExpandedKeys([`drive:root:${rootMeta.token}`, 'wiki:root']);
     } catch (error) {
       console.error('加载根目录数据失败:', error);
       message.error('加载数据失败');

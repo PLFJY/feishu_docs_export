@@ -19,10 +19,10 @@ import {
   FileQueryOptions,
   WikiNodeQueryOptions,
 } from '../types/feishuApi';
-import { FeishuFile, FeishuWikiNode, FeishuWikiSpace, ExportFormatConfig, DEFAULT_EXPORT_FORMAT_CONFIG } from '../types';
+import { FeishuFile, FeishuWikiNode, FeishuWikiSpace, ExportFormatConfig, DEFAULT_EXPORT_FORMAT_CONFIG, normalizeExportFormatConfig } from '../types';
 import { createTauriAdapter } from './http';
 import { TokenExpiredEvent } from '../types/event';
-const FEISHU_SCOPE = 'contact:user.employee_id:readonly docs:doc docs:document.media:download docs:document:export docx:document drive:drive drive:file drive:file:download wiki:wiki offline_access';
+const FEISHU_SCOPE = 'bitable:app contact:user.employee_id:readonly docs:doc docs:document.media:download docs:document:export docx:document docx:document:readonly drive:drive drive:file drive:file:download offline_access sheets:spreadsheet wiki:wiki';
 
 /**
  * 飞书配置接口
@@ -85,7 +85,9 @@ export class FeishuApi {
         console.log("response", response);
         // 检查飞书API的业务错误码
         if (response.data && response.data.code !== undefined && response.data.code !== 0) {
-          const errorMessage = response.data.error ? response.data.error + ":" + response.data.error_description : response.data.msg | response.data.message || 'Unknown error';
+          const errorMessage = response.data.error
+            ? `${response.data.error}:${response.data.error_description || ''}`
+            : response.data.msg || response.data.message || 'Unknown error';
           throw new Error(`API Error: ${errorMessage}`);
         }
         // 返回实际数据，而不是包装的ApiResponse
@@ -93,7 +95,7 @@ export class FeishuApi {
       },
       async (error) => {
         console.log("error", error);
-        console.log("error", error.response.data);
+        console.log("error.response.data", error.response?.data);
         const originalRequest = error.config;
         
         // 如果是401错误且还没有重试过，尝试刷新token
@@ -112,8 +114,11 @@ export class FeishuApi {
             throw refreshError;
           }
         }
-        console.log("error.response.data.msg", error.response.data.msg, "error.response.data.message", error.response.data.message, "error.response.data.error", error.response.data.error, "error.response.data.error_description", error.response.data.error_description);
-        const errorMessage = error.response.data.msg ? error.response.data.msg || error.response.data.message || 'Unknown error' : error.response.data.error + ":" + error.response.data.error_description;
+        const responseData = error.response?.data;
+        console.log("error.response.data", responseData);
+        const errorMessage = responseData
+          ? (responseData.msg || responseData.message || (responseData.error ? `${responseData.error}:${responseData.error_description || ''}` : 'Unknown error'))
+          : error.message || 'Network error';
         console.log("errorMessage", errorMessage);  
         return Promise.reject(new Error(errorMessage));
       }
@@ -427,7 +432,7 @@ export class FeishuApi {
         pageToken,
       });
       
-      files.push(...result.files);
+      files.push(...(Array.isArray(result.files) ? result.files : []));
       pageToken = result.next_page_token;
     } while (pageToken);
 
@@ -468,7 +473,7 @@ export class FeishuApi {
  
      do {
        const result = await this.wikiSpacesPagination({ pageToken });
-       spaces.push(...result.items);
+       spaces.push(...(Array.isArray(result.items) ? result.items : []));
        pageToken = result.page_token;
        hasMore = result.has_more;
      } while (hasMore);
@@ -488,7 +493,6 @@ export class FeishuApi {
     const { pageSize = 50, pageToken, parentNodeToken } = options;
     
     const params: any = {
-      space_id: spaceId,
       page_size: pageSize,
       user_id_type: 'user_id',
     };
@@ -515,6 +519,7 @@ export class FeishuApi {
    ): Promise<FeishuWikiNode[]> {
      const nodes: FeishuWikiNode[] = [];
      let pageToken: string | undefined;
+     let hasMore = false;
  
      do {
        const result = await this.spaceNodesPagination(spaceId, {
@@ -522,9 +527,10 @@ export class FeishuApi {
          pageToken,
        });
        
-       nodes.push(...result.items);
+       nodes.push(...(Array.isArray(result.items) ? result.items : []));
        pageToken = result.page_token;
-     } while (pageToken);
+       hasMore = result.has_more;
+     } while (hasMore && pageToken);
  
      return nodes;
    }
@@ -599,7 +605,7 @@ export class FeishuApi {
     try {
       const configStr = localStorage.getItem('export_format_config');
       if (configStr) {
-        return JSON.parse(configStr);
+        return normalizeExportFormatConfig(JSON.parse(configStr));
       }
     } catch (error) {
       console.error('加载导出格式配置失败:', error);
@@ -741,4 +747,3 @@ export function getFeishuApi(): FeishuApi {
 
 // 为了向后兼容，保留 feishuApi 导出（但推荐使用 getFeishuApi()）
 export const feishuApi = FeishuApi.getInstance();
-

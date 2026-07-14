@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Form, Select, Typography, Space, Divider, App } from 'antd';
 import { FileTextOutlined } from '@ant-design/icons';
-import { ExportFormatConfig, DEFAULT_EXPORT_FORMAT_CONFIG } from '../types';
+import { ExportFormatConfig, DEFAULT_EXPORT_FORMAT_CONFIG, normalizeExportFormatConfig } from '../types';
 
 const { Paragraph } = Typography;
 
@@ -25,7 +25,7 @@ const ExportFormatConfigModal: React.FC<ExportFormatConfigModalProps> = ({ visib
     try {
       const configStr = localStorage.getItem('export_format_config');
       if (configStr) {
-        return JSON.parse(configStr);
+        return normalizeExportFormatConfig(JSON.parse(configStr));
       }
     } catch (error) {
       console.error('加载导出格式配置失败:', error);
@@ -123,7 +123,6 @@ const ExportFormatConfigModal: React.FC<ExportFormatConfigModalProps> = ({ visib
           <Select>
             <Select.Option value="docx">Word格式 (.docx)</Select.Option>
             <Select.Option value="pdf">PDF格式 (.pdf)</Select.Option>
-            <Select.Option value="md">Markdown格式 (.md)</Select.Option>
           </Select>
         </Form.Item>
 
@@ -136,7 +135,6 @@ const ExportFormatConfigModal: React.FC<ExportFormatConfigModalProps> = ({ visib
           <Select>
             <Select.Option value="docx">Word格式 (.docx)</Select.Option>
             <Select.Option value="pdf">PDF格式 (.pdf)</Select.Option>
-            <Select.Option value="md">Markdown格式 (.md)</Select.Option>
           </Select>
         </Form.Item>
 

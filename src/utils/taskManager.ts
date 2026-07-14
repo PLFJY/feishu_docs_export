@@ -7,7 +7,8 @@ import {
   FeishuWikiNode,
   FeishuRootMeta,
   ExportFormatConfig,
-  DEFAULT_EXPORT_FORMAT_CONFIG
+  DEFAULT_EXPORT_FORMAT_CONFIG,
+  normalizeExportFormatConfig
 } from '../types';
 import {
   DownloadTask,
@@ -1018,7 +1019,7 @@ function loadExportFormatConfig(): ExportFormatConfig {
   try {
     const configStr = localStorage.getItem('export_format_config');
     if (configStr) {
-      return JSON.parse(configStr);
+      return normalizeExportFormatConfig(JSON.parse(configStr));
     }
   } catch (error) {
     console.error('加载导出格式配置失败:', error);
